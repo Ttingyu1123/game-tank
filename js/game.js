@@ -452,7 +452,7 @@ class Game {
   }
 
   _drawFloatTexts(ctx) {
-    ctx.font = 'bold 14px "Courier New", monospace';
+    ctx.font = `bold 15px ${CONST.FONTS.MONO}`;
     ctx.textAlign = 'center';
     for (const f of this.floatTexts) {
       ctx.globalAlpha = 1 - f.t / f.maxT;
@@ -464,97 +464,120 @@ class Game {
   }
 
   _drawHUD(ctx) {
-    ctx.fillStyle = 'rgba(8, 10, 16, 0.72)';
-    ctx.fillRect(0, 0, CONST.CANVAS_W, 26);
-    ctx.font = 'bold 14px "Courier New", monospace';
+    const M = CONST.FONTS.MONO;
+    ctx.fillStyle = 'rgba(8, 10, 16, 0.78)';
+    ctx.fillRect(0, 0, CONST.CANVAS_W, CONST.HUD_H);
+    ctx.fillStyle = 'rgba(159, 176, 198, 0.18)';
+    ctx.fillRect(0, CONST.HUD_H - 1, CONST.CANVAS_W, 1);
     ctx.textBaseline = 'middle';
-    const y = 13;
-    ctx.fillStyle = '#ffe08a';
-    ctx.fillText(`SCORE ${this.score}`, 12, y);
-    ctx.fillStyle = '#8ee08a';
-    ctx.fillText(`LIVES ${Math.max(this.player.lives, 0)}`, 180, y);
-    ctx.fillStyle = '#8ab8ff';
-    ctx.fillText(`WAVE ${this.waveIndex + 1}/${CONST.WAVES.length}`, 310, y);
-    ctx.fillStyle = '#ff9d8a';
-    ctx.fillText(`ENEMIES ${this.enemiesRemaining()}`, 460, y);
-    ctx.fillStyle = this.baseAlive ? '#8ee08a' : '#ff5d5d';
-    ctx.fillText(`BASE ${this.baseAlive ? 'OK' : 'DESTROYED'}`, 640, y);
-    ctx.fillStyle = audioSys.enabled ? '#9fb0c6' : '#5a6272';
-    ctx.fillText(`[M]SND ${audioSys.enabled ? 'ON' : 'OFF'}`, 780, y);
-    ctx.fillStyle = (audioSys.enabled && audioSys.musicEnabled) ? '#9fb0c6' : '#5a6272';
-    ctx.fillText(`[B]BGM ${audioSys.musicEnabled ? 'ON' : 'OFF'}`, 878, y);
+    const y = CONST.HUD_H / 2 + 1;
+
+    // 小標籤 + 大數值的雙層樣式
+    const item = (x, label, value, color) => {
+      ctx.font = `10px ${M}`;
+      ctx.letterSpacing = '1.5px';
+      ctx.fillStyle = '#67738a';
+      ctx.fillText(label, x, y);
+      const lw = ctx.measureText(label).width;
+      ctx.font = `bold 17px ${M}`;
+      ctx.letterSpacing = '0px';
+      ctx.fillStyle = color;
+      ctx.fillText(value, x + lw + 9, y);
+    };
+    item(14, 'SCORE', `${this.score}`, '#ffe08a');
+    item(178, 'LIVES', `${Math.max(this.player.lives, 0)}`, '#8ee08a');
+    item(288, 'WAVE', `${this.waveIndex + 1}/${CONST.WAVES.length}`, '#8ab8ff');
+    item(412, 'ENEMIES', `${this.enemiesRemaining()}`, '#ff9d8a');
+    item(556, 'BASE', this.baseAlive ? 'OK' : 'LOST', this.baseAlive ? '#8ee08a' : '#ff5d5d');
+
+    // 右側開關提示（次要資訊，縮小淡化）
+    ctx.font = `bold 12px ${M}`;
+    ctx.fillStyle = audioSys.enabled ? '#9fb0c6' : '#525b6c';
+    ctx.fillText(`[M]SND ${audioSys.enabled ? 'ON' : 'OFF'}`, 772, y);
+    ctx.fillStyle = (audioSys.enabled && audioSys.musicEnabled) ? '#9fb0c6' : '#525b6c';
+    ctx.fillText(`[B]BGM ${audioSys.musicEnabled ? 'ON' : 'OFF'}`, 872, y);
     ctx.textBaseline = 'alphabetic';
+  }
+
+  /* 大標題：像素風雙層陰影 + 寬字距 */
+  _title(ctx, text, x, y, size, color, spacing) {
+    const M = CONST.FONTS.MONO;
+    ctx.font = `bold ${size}px ${M}`;
+    ctx.letterSpacing = `${spacing}px`;
+    const off = Math.max(3, Math.round(size / 14));
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+    ctx.fillText(text, x + off, y + off);
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+    ctx.letterSpacing = '0px';
   }
 
   _drawOverlay(ctx) {
     const W = CONST.CANVAS_W, H = CONST.CANVAS_H;
+    const M = CONST.FONTS.MONO, C = CONST.FONTS.CJK;
     const dim = () => { ctx.fillStyle = 'rgba(5, 7, 12, 0.72)'; ctx.fillRect(0, 0, W, H); };
     ctx.textAlign = 'center';
 
     switch (this.state) {
       case STATE.START: {
         dim();
-        ctx.fillStyle = '#f0c040';
-        ctx.font = 'bold 52px "Courier New", monospace';
-        ctx.fillText('IRON VANGUARD', W / 2, H / 2 - 110);
+        this._title(ctx, 'IRON VANGUARD', W / 2, H / 2 - 108, 56, '#f0c040', 8);
         ctx.fillStyle = '#9fb0c6';
-        ctx.font = '20px "Courier New", monospace';
-        ctx.fillText('坦克保衛戰 — 守住基地，撐過 5 波進攻', W / 2, H / 2 - 66);
-        ctx.font = '16px "Courier New", monospace';
+        ctx.font = `500 20px ${C}`;
+        ctx.fillText('坦克保衛戰 — 守住基地，撐過 5 波進攻', W / 2, H / 2 - 62);
+        ctx.font = `15px ${C}`;
         ctx.fillStyle = '#6b7686';
-        ctx.fillText('WASD / 方向鍵 移動   Space 射擊   P 暫停   M 音效   B 音樂', W / 2, H / 2 + 4);
+        ctx.fillText('WASD / 方向鍵 移動 ・ Space 射擊 ・ P 暫停 ・ M 音效 ・ B 音樂', W / 2, H / 2 + 6);
         if (Math.floor(this.timeGlobal * 2) % 2 === 0) {
           ctx.fillStyle = '#ffe08a';
-          ctx.font = 'bold 24px "Courier New", monospace';
-          ctx.fillText('PRESS ENTER TO START', W / 2, H / 2 + 70);
+          ctx.font = `bold 22px ${M}`;
+          ctx.letterSpacing = '3px';
+          ctx.fillText('PRESS ENTER TO START', W / 2, H / 2 + 72);
+          ctx.letterSpacing = '0px';
         }
         break;
       }
       case STATE.WAVE_TRANSITION: {
-        ctx.fillStyle = 'rgba(5, 7, 12, 0.5)';
-        ctx.fillRect(0, H / 2 - 70, W, 130);
-        ctx.fillStyle = '#8ab8ff';
-        ctx.font = 'bold 46px "Courier New", monospace';
-        ctx.fillText(`WAVE ${this.waveIndex + 1}`, W / 2, H / 2 - 10);
+        ctx.fillStyle = 'rgba(5, 7, 12, 0.55)';
+        ctx.fillRect(0, H / 2 - 72, W, 132);
+        this._title(ctx, `WAVE ${this.waveIndex + 1}`, W / 2, H / 2 - 12, 48, '#8ab8ff', 6);
         ctx.fillStyle = '#9fb0c6';
-        ctx.font = '18px "Courier New", monospace';
+        ctx.font = `bold 15px ${M}`;
+        ctx.letterSpacing = '5px';
         ctx.fillText('READY...', W / 2, H / 2 + 32);
+        ctx.letterSpacing = '0px';
         break;
       }
       case STATE.PAUSED: {
         dim();
-        ctx.fillStyle = '#ffe08a';
-        ctx.font = 'bold 42px "Courier New", monospace';
-        ctx.fillText('PAUSED', W / 2, H / 2 - 10);
+        this._title(ctx, 'PAUSED', W / 2, H / 2 - 12, 46, '#ffe08a', 6);
         ctx.fillStyle = '#9fb0c6';
-        ctx.font = '16px "Courier New", monospace';
-        ctx.fillText('按 P 繼續', W / 2, H / 2 + 30);
+        ctx.font = `16px ${C}`;
+        ctx.fillText('按 P 繼續', W / 2, H / 2 + 32);
         break;
       }
       case STATE.GAME_OVER: {
         dim();
-        ctx.fillStyle = '#ff5d5d';
-        ctx.font = 'bold 52px "Courier New", monospace';
-        ctx.fillText('GAME OVER', W / 2, H / 2 - 40);
+        this._title(ctx, 'GAME OVER', W / 2, H / 2 - 42, 56, '#ff5d5d', 6);
         ctx.fillStyle = '#ffe08a';
-        ctx.font = '22px "Courier New", monospace';
-        ctx.fillText(`SCORE ${this.score}`, W / 2, H / 2 + 8);
+        ctx.font = `bold 24px ${M}`;
+        ctx.fillText(`SCORE ${this.score}`, W / 2, H / 2 + 10);
         ctx.fillStyle = '#9fb0c6';
-        ctx.font = '18px "Courier New", monospace';
-        ctx.fillText('PRESS R TO RESTART', W / 2, H / 2 + 54);
+        ctx.font = `bold 17px ${M}`;
+        ctx.letterSpacing = '2px';
+        ctx.fillText('PRESS R TO RESTART', W / 2, H / 2 + 56);
+        ctx.letterSpacing = '0px';
         break;
       }
       case STATE.VICTORY: {
         dim();
-        ctx.fillStyle = '#8ee08a';
-        ctx.font = 'bold 52px "Courier New", monospace';
-        ctx.fillText('VICTORY!', W / 2, H / 2 - 40);
+        this._title(ctx, 'VICTORY!', W / 2, H / 2 - 42, 56, '#8ee08a', 6);
         ctx.fillStyle = '#ffe08a';
-        ctx.font = '22px "Courier New", monospace';
-        ctx.fillText(`SCORE ${this.score}`, W / 2, H / 2 + 8);
+        ctx.font = `bold 24px ${M}`;
+        ctx.fillText(`SCORE ${this.score}`, W / 2, H / 2 + 10);
         ctx.fillStyle = '#9fb0c6';
-        ctx.font = '18px "Courier New", monospace';
-        ctx.fillText('成功守住基地！PRESS R TO RESTART', W / 2, H / 2 + 54);
+        ctx.font = `16px ${C}`;
+        ctx.fillText('成功守住基地！按 R 再玩一次', W / 2, H / 2 + 56);
         break;
       }
     }

@@ -54,6 +54,13 @@ const CONST = Object.freeze({
 
   BRICK_HP: 2,              // 磚牆每小格耐久
   MAX_PARTICLES: 400,
+
+  // 字型堆疊：英數用銳利的系統等寬字型；中文明確指定黑體系，避免掉到預設襯線
+  FONTS: Object.freeze({
+    MONO: "'Consolas', 'Menlo', 'Courier New', monospace",
+    CJK: "'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', sans-serif",
+  }),
+  HUD_H: 30,
 });
 
 /* 方向：0上 1右 2下 3左 */
