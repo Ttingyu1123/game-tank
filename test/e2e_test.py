@@ -181,6 +181,15 @@ def main():
         check("27. 音效關閉後遊戲仍運作", snd is False and g(page, "g.state") == "PLAYING")
         page.keyboard.press("KeyM")
 
+        # BGM：遊玩中應為播放狀態；B 鍵可單獨開關；遊戲仍運作
+        bgm_on = page.evaluate("() => audioSys.musicOn")
+        page.keyboard.press("KeyB")
+        bgm_toggled = page.evaluate("() => audioSys.musicEnabled")
+        time.sleep(0.3)
+        check("BGM 遊玩中播放且 B 鍵可關閉", bgm_on is True and bgm_toggled is False
+              and g(page, "g.state") == "PLAYING", f"on={bgm_on}, enabled={bgm_toggled}")
+        page.keyboard.press("KeyB")
+
         # 9. 水面阻擋坦克但不阻擋砲彈
         page.evaluate("() => { const g = window.__game; g.player.x = 144; g.player.y = 384; g.player.dir = 3; g.player.cooldown = 0; }")
         page.keyboard.down("KeyA"); time.sleep(0.6); page.keyboard.up("KeyA")
@@ -304,6 +313,8 @@ def main():
         }""")
         ok = wait_state(page, "GAME_OVER", timeout=4)
         check("19. 生命歸零後 GAME_OVER", ok, f"state={g(page, 'g.state')}")
+        time.sleep(0.2)
+        check("BGM 於 GAME_OVER 停止", page.evaluate("() => audioSys.musicOn") is False)
 
         # 21-22. 波次切換 + 第 5 波完成 → VICTORY
         page.keyboard.press("KeyR")

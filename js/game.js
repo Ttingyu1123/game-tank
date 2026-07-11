@@ -80,6 +80,10 @@ class Game {
       audioSys.toggle();
       return;
     }
+    if (code === 'KeyB') {
+      audioSys.toggleMusic();
+      return;
+    }
     switch (this.state) {
       case STATE.START:
         if (code === 'Enter' || code === 'Space') this.startGame();
@@ -108,6 +112,12 @@ class Game {
   /* ---------- 更新 ---------- */
   update(dt, input) {
     this.timeGlobal += dt; // 不受狀態凍結影響（開始畫面閃爍用）
+    // BGM 跟隨狀態：遊玩中（含波次提示/重生）播放，其餘停止
+    audioSys.setMusic(
+      this.state === STATE.PLAYING ||
+      this.state === STATE.WAVE_TRANSITION ||
+      this.state === STATE.PLAYER_RESPAWNING
+    );
     switch (this.state) {
       case STATE.PAUSED:
       case STATE.START:
@@ -470,7 +480,9 @@ class Game {
     ctx.fillStyle = this.baseAlive ? '#8ee08a' : '#ff5d5d';
     ctx.fillText(`BASE ${this.baseAlive ? 'OK' : 'DESTROYED'}`, 640, y);
     ctx.fillStyle = audioSys.enabled ? '#9fb0c6' : '#5a6272';
-    ctx.fillText(`[M]SND ${audioSys.enabled ? 'ON' : 'OFF'}`, 840, y);
+    ctx.fillText(`[M]SND ${audioSys.enabled ? 'ON' : 'OFF'}`, 780, y);
+    ctx.fillStyle = (audioSys.enabled && audioSys.musicEnabled) ? '#9fb0c6' : '#5a6272';
+    ctx.fillText(`[B]BGM ${audioSys.musicEnabled ? 'ON' : 'OFF'}`, 878, y);
     ctx.textBaseline = 'alphabetic';
   }
 
@@ -490,7 +502,7 @@ class Game {
         ctx.fillText('坦克保衛戰 — 守住基地，撐過 5 波進攻', W / 2, H / 2 - 66);
         ctx.font = '16px "Courier New", monospace';
         ctx.fillStyle = '#6b7686';
-        ctx.fillText('WASD / 方向鍵 移動   Space 射擊   P 暫停   M 音效', W / 2, H / 2 + 4);
+        ctx.fillText('WASD / 方向鍵 移動   Space 射擊   P 暫停   M 音效   B 音樂', W / 2, H / 2 + 4);
         if (Math.floor(this.timeGlobal * 2) % 2 === 0) {
           ctx.fillStyle = '#ffe08a';
           ctx.font = 'bold 24px "Courier New", monospace';
