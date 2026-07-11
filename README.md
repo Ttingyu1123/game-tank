@@ -1,5 +1,7 @@
 # IRON VANGUARD — 坦克保衛戰
 
+**線上遊玩**：<https://ttingyu1123.github.io/game-tank/>
+
 2D 俯視角坦克射擊遊戲。玩家操控坦克在迷宮化競技場中保護基地，擊退 5 波敵方坦克進攻。
 純 HTML5 Canvas + 原生 JavaScript 打造：無框架、無遊戲引擎、無外部圖片與音效檔、無 CDN，可完全離線執行。
 
