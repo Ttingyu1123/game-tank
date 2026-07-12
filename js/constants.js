@@ -55,6 +55,19 @@ const CONST = Object.freeze({
   BRICK_HP: 2,              // 磚牆每小格耐久
   MAX_PARTICLES: 400,
 
+  // 寶物：敵人擊毀時機率掉落，限時存在
+  POWERUP: Object.freeze({
+    dropChance: 0.25,
+    lifetime: 10,          // 出現後存活秒數
+    blinkTime: 3,          // 消失前閃爍提醒秒數
+    size: 30,
+    maxLives: 5,
+    maxLifeScore: 500,     // 滿命時撿到 1UP 改給分
+    speedMult: 1.45,
+    speedDuration: 8,
+    shieldDuration: 6,
+  }),
+
   // 字型堆疊：英數用銳利的系統等寬字型；中文明確指定黑體系，避免掉到預設襯線
   FONTS: Object.freeze({
     MONO: "'Consolas', 'Menlo', 'Courier New', monospace",

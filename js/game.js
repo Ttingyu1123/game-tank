@@ -23,6 +23,7 @@ class Game {
     this.player = new Player();
     this.enemies = [];
     this.bullets = [];
+    this.powerups = [];
     this.floatTexts = [];
     this.state = STATE.START;
     this.time = 0;
@@ -160,6 +161,7 @@ class Game {
 
     this._updateSpawning(dt);
     this._updateBullets(dt);
+    this._updatePowerups(dt);
     this.particles.update(dt);
     this._updateFloatTexts(dt);
     this._updateEndTimer(dt);
@@ -299,6 +301,54 @@ class Game {
     audioSys.tankExplode();
     this.score += e.cfg.score;
     this.floatTexts.push({ x: e.x, y: e.y - 20, text: `+${e.cfg.score}`, t: 0, maxT: 0.9 });
+    if (Math.random() < CONST.POWERUP.dropChance) {
+      const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
+      this.powerups.push(new Powerup(type, e.x, e.y));
+    }
+  }
+
+  /* ---------- 寶物 ---------- */
+  _updatePowerups(dt) {
+    const p = this.player;
+    for (const pu of this.powerups) {
+      pu.update(dt);
+      if (pu.dead || !p || !p.alive) continue;
+      const a = pu.rect, b = p.rect;
+      if (aabbOverlap(a.x, a.y, a.w, a.h, b.x, b.y, b.w, b.h)) {
+        pu.dead = true;
+        this._applyPowerup(pu);
+      }
+    }
+    for (let i = this.powerups.length - 1; i >= 0; i--) {
+      if (this.powerups[i].dead) this.powerups.splice(i, 1);
+    }
+  }
+
+  _applyPowerup(pu) {
+    const P = CONST.POWERUP;
+    const p = this.player;
+    let text;
+    switch (pu.type) {
+      case 'life':
+        if (p.lives < P.maxLives) {
+          p.lives++;
+          text = '1UP';
+        } else {
+          this.score += P.maxLifeScore; // 滿命改給分
+          text = `MAX +${P.maxLifeScore}`;
+        }
+        break;
+      case 'speed':
+        p.speedBoost = P.speedDuration;
+        text = 'SPEED UP!';
+        break;
+      case 'shield':
+        p.invincible = Math.max(p.invincible, P.shieldDuration);
+        text = 'SHIELD!';
+        break;
+    }
+    this.floatTexts.push({ x: pu.x, y: pu.y - 22, text, t: 0, maxT: 1.1 });
+    audioSys.powerup();
   }
 
   _playerKilled() {
@@ -389,6 +439,7 @@ class Game {
     if (this.player.alive && this.state !== STATE.START) this.player.draw(ctx, this.time);
     for (const b of this.bullets) if (!b.dead) b.draw(ctx);
     this.map.drawGrass(ctx);
+    for (const pu of this.powerups) pu.draw(ctx, this.time);
     this.particles.draw(ctx);
     this._drawFloatTexts(ctx);
 

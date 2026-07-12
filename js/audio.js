@@ -192,6 +192,7 @@ class AudioSys {
   baseExplode()  { this._noise(0.9, 0.9, 350); this._beep(90, 22, 0.9, 'sine', 0.9); this._noise(0.6, 0.6, 200, 0.15); }
   playerHit()    { this._beep(300, 60, 0.3, 'sawtooth', 0.5); }
   waveStart()    { this._beep(440, 440, 0.12, 'square', 0.4); this._beep(660, 660, 0.14, 'square', 0.4, 0.16); }
+  powerup()      { [660, 880, 1320].forEach((f, i) => this._beep(f, f * 1.05, 0.09, 'square', 0.4, i * 0.07)); }
   victory()      { [523, 659, 784, 1047].forEach((f, i) => this._beep(f, f, 0.18, 'square', 0.4, i * 0.18)); }
   gameOver()     { [392, 311, 233, 155].forEach((f, i) => this._beep(f, f * 0.9, 0.3, 'triangle', 0.4, i * 0.25)); }
 }

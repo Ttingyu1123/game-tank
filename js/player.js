@@ -8,6 +8,7 @@ class Player extends Tank {
     this.maxBullets = P.maxBullets;
     this.lives = P.lives;
     this.invincible = P.invincibleTime; // 開場也給短暫無敵
+    this.speedBoost = 0;                // 加速寶物剩餘秒數
     this.dir = DIR.UP;
   }
 
@@ -19,11 +20,14 @@ class Player extends Tank {
     this.alive = true;
     this.cooldown = 0;
     this.invincible = P.invincibleTime;
+    this.speedBoost = 0; // 死亡清除 buff
   }
 
   update(dt, game, input) {
     this.updateTimers(dt);
     if (this.invincible > 0) this.invincible -= dt;
+    if (this.speedBoost > 0) this.speedBoost -= dt;
+    this.speed = CONST.PLAYER.speed * (this.speedBoost > 0 ? CONST.POWERUP.speedMult : 1);
 
     const dir = input.currentDir();
     if (dir !== null) {
@@ -52,6 +56,24 @@ class Player extends Tank {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.half + 6, 0, Math.PI * 2);
       ctx.stroke();
+    }
+    // 加速中：車尾雙排氣流線
+    if (this.speedBoost > 0) {
+      const v = DIR_VECS[this.dir];
+      ctx.strokeStyle = `rgba(79, 195, 232, ${0.35 + 0.3 * Math.sin(time * 20)})`;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      const back = this.half + 4;
+      const len = 9 + 4 * Math.sin(time * 16);
+      for (const side of [-8, 8]) {
+        const sx = this.x - v.x * back + v.y * side;
+        const sy = this.y - v.y * back + v.x * side;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx - v.x * len, sy - v.y * len);
+        ctx.stroke();
+      }
+      ctx.lineCap = 'butt';
     }
   }
 }
