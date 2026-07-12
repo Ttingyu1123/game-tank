@@ -57,6 +57,9 @@ class Game {
     this.spawnList = wave.list.slice();
     this.spawnWarns = [];
     this.spawnTimer = 0.5; // 波次開始後稍等再生成
+    // 玩家在重生倒數中跨波：立即重生。否則 PLAYER_RESPAWNING 被覆蓋成
+    // WAVE_TRANSITION 後重生計時器永不觸發，玩家有命卻永遠回不來。
+    if (this.player && !this.player.alive && this.player.lives > 0) this.player.respawn();
     this.state = STATE.WAVE_TRANSITION;
     this.transitionTimer = CONST.WAVE_TRANSITION_TIME;
     audioSys.waveStart();
