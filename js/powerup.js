@@ -1,8 +1,24 @@
 'use strict';
 /* 寶物：敵人擊毀時機率掉落，玩家碾過撿取。
-   life = +1 命、speed = 限時加速、shield = 限時護盾。 */
+   life = +1 命、speed = 限時加速、shield = 限時護盾、
+   power = 限時砲彈可破鋼牆、shovel = 基地磚牆限時變鋼牆（含修復）、
+   bomb = 全場敵人即毀、star = 火力升級（死亡重置）。 */
 
-const POWERUP_TYPES = Object.freeze(['life', 'speed', 'shield']);
+/* 加權掉落表：炸彈最稀有 */
+const POWERUP_DROPS = Object.freeze([
+  ['life', 2], ['speed', 3], ['shield', 3],
+  ['power', 2], ['shovel', 2], ['star', 2], ['bomb', 1],
+]);
+const POWERUP_WEIGHT_SUM = POWERUP_DROPS.reduce((s, [, w]) => s + w, 0);
+
+function randomPowerupType() {
+  let roll = Math.random() * POWERUP_WEIGHT_SUM;
+  for (const [type, w] of POWERUP_DROPS) {
+    roll -= w;
+    if (roll < 0) return type;
+  }
+  return POWERUP_DROPS[0][0];
+}
 
 class Powerup {
   constructor(type, x, y) {
@@ -35,7 +51,10 @@ class Powerup {
     const y = this.y + bob;
 
     // 底框：深色面板 + 型別色描邊發光
-    const colors = { life: '#8ee08a', speed: '#4fc3e8', shield: '#8ab8ff' };
+    const colors = {
+      life: '#8ee08a', speed: '#4fc3e8', shield: '#8ab8ff',
+      power: '#ff8438', shovel: '#d8b26a', bomb: '#ff5d5d', star: '#ffe08a',
+    };
     const c = colors[this.type];
     ctx.save();
     ctx.shadowColor = c;
@@ -75,6 +94,65 @@ class Powerup {
         ctx.quadraticCurveTo(this.x + 8, y + 7, this.x, y + 10);
         ctx.quadraticCurveTo(this.x - 8, y + 7, this.x - 8, y + 2);
         ctx.lineTo(this.x - 8, y - 5);
+        ctx.closePath();
+        ctx.fill();
+        break;
+      }
+      case 'power': { // 彈頭：圓錐頭 + 彈身
+        ctx.beginPath();
+        ctx.moveTo(this.x, y - 10);
+        ctx.lineTo(this.x + 5, y - 2);
+        ctx.lineTo(this.x + 5, y + 8);
+        ctx.lineTo(this.x - 5, y + 8);
+        ctx.lineTo(this.x - 5, y - 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#161a24';
+        ctx.fillRect(this.x - 5, y + 3, 10, 2);
+        break;
+      }
+      case 'shovel': { // 鏟子：斜柄 + 梯形鏟頭
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(this.x + 7, y - 9);
+        ctx.lineTo(this.x - 1, y - 1);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(this.x - 6, y - 2);
+        ctx.lineTo(this.x + 2, y + 6);
+        ctx.lineTo(this.x - 2, y + 10);
+        ctx.quadraticCurveTo(this.x - 9, y + 9, this.x - 10, y + 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.lineCap = 'butt';
+        break;
+      }
+      case 'bomb': { // 炸彈：圓體 + 引信火花
+        ctx.beginPath();
+        ctx.arc(this.x - 1, y + 2, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(this.x + 3, y - 4);
+        ctx.quadraticCurveTo(this.x + 7, y - 8, this.x + 5, y - 10);
+        ctx.stroke();
+        ctx.fillStyle = '#ffe08a';
+        ctx.beginPath();
+        ctx.arc(this.x + 5, y - 10, 2, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case 'star': { // 五角星
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const aOut = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+          const aIn = aOut + Math.PI / 5;
+          const R = 10, rr = 4.2;
+          if (i === 0) ctx.moveTo(this.x + R * Math.cos(aOut), y + R * Math.sin(aOut));
+          else ctx.lineTo(this.x + R * Math.cos(aOut), y + R * Math.sin(aOut));
+          ctx.lineTo(this.x + rr * Math.cos(aIn), y + rr * Math.sin(aIn));
+        }
         ctx.closePath();
         ctx.fill();
         break;

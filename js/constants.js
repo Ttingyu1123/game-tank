@@ -62,10 +62,15 @@ const CONST = Object.freeze({
     blinkTime: 3,          // 消失前閃爍提醒秒數
     size: 30,
     maxLives: 5,
-    maxLifeScore: 500,     // 滿命時撿到 1UP 改給分
+    maxLifeScore: 500,     // 滿命時撿到 1UP 改給分（星星滿級同額）
     speedMult: 1.45,
     speedDuration: 8,
     shieldDuration: 6,
+    powerDuration: 15,     // 強化砲彈（可破鋼牆）持續秒數
+    shovelDuration: 15,    // 基地磚牆變鋼牆持續秒數
+    starMaxTier: 2,        // 星星火力上限：1=射速/彈速up 2=+1同屏彈數
+    starCooldownMult: 0.7,
+    starBulletSpeedMult: 1.25,
   }),
 
   // 字型堆疊：英數用銳利的系統等寬字型；中文明確指定黑體系，避免掉到預設襯線

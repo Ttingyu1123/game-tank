@@ -40,6 +40,7 @@ class Game {
 
     // 計時器
     this.transitionTimer = 0;
+    this.shovelTimer = 0;
     this.respawnTimer = 0;
     this.endTimer = 0;
     this.endTarget = null;
@@ -165,6 +166,10 @@ class Game {
     this._updateSpawning(dt);
     this._updateBullets(dt);
     this._updatePowerups(dt);
+    if (this.shovelTimer > 0) {
+      this.shovelTimer -= dt;
+      if (this.shovelTimer <= 0) this.map.fortifyBase(false, this.allTanks());
+    }
     this.particles.update(dt);
     this._updateFloatTexts(dt);
     this._updateEndTimer(dt);
@@ -239,8 +244,8 @@ class Game {
       return;
     }
     // 2. 地形（磚牆 / 鋼牆）
-    const impact = this.map.bulletImpact(r.x, r.y, r.w, r.h, b.dir, this.particles);
-    if (impact === 'brick') {
+    const impact = this.map.bulletImpact(r.x, r.y, r.w, r.h, b.dir, this.particles, b.pierce);
+    if (impact === 'brick' || impact === 'steel-broken') {
       this.particles.sparks(b.x, b.y);
       audioSys.brickBreak();
       b.kill();
@@ -305,8 +310,7 @@ class Game {
     this.score += e.cfg.score;
     this.floatTexts.push({ x: e.x, y: e.y - 20, text: `+${e.cfg.score}`, t: 0, maxT: 0.9 });
     if (Math.random() < CONST.POWERUP.dropChance) {
-      const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
-      this.powerups.push(new Powerup(type, e.x, e.y));
+      this.powerups.push(new Powerup(randomPowerupType(), e.x, e.y));
     }
   }
 
@@ -348,6 +352,31 @@ class Game {
       case 'shield':
         p.invincible = Math.max(p.invincible, P.shieldDuration);
         text = 'SHIELD!';
+        break;
+      case 'power':
+        p.powerTimer = P.powerDuration;
+        text = 'POWER SHELL!';
+        break;
+      case 'shovel':
+        this.shovelTimer = P.shovelDuration;
+        this.map.fortifyBase(true, this.allTanks());
+        text = 'FORTIFY!';
+        break;
+      case 'bomb':
+        for (const e of this.enemies) {
+          if (e.alive) { e.alive = false; this._enemyDestroyed(e); }
+        }
+        audioSys.bombBlast();
+        text = 'BOOM!';
+        break;
+      case 'star':
+        if (p.starTier < P.starMaxTier) {
+          p.starTier++;
+          text = `STAR x${p.starTier}!`;
+        } else {
+          this.score += P.maxLifeScore;
+          text = `MAX +${P.maxLifeScore}`;
+        }
         break;
     }
     this.floatTexts.push({ x: pu.x, y: pu.y - 22, text, t: 0, maxT: 1.1 });
@@ -543,6 +572,20 @@ class Game {
     item(288, 'WAVE', `${this.waveIndex + 1}/${CONST.WAVES.length}`, '#8ab8ff');
     item(412, 'ENEMIES', `${this.enemiesRemaining()}`, '#ff9d8a');
     item(556, 'BASE', this.baseAlive ? 'OK' : 'LOST', this.baseAlive ? '#8ee08a' : '#ff5d5d');
+
+    // 進行中的 buff（星等常駐、其餘顯示剩餘秒數）
+    const p = this.player;
+    let bx = 648;
+    ctx.font = `bold 12px ${M}`;
+    const chip = (txt, color) => {
+      ctx.fillStyle = color;
+      ctx.fillText(txt, bx, y);
+      bx += ctx.measureText(txt).width + 9;
+    };
+    if (p.starTier > 0) chip('★'.repeat(p.starTier), '#ffe08a');
+    if (p.powerTimer > 0) chip(`PW${Math.ceil(p.powerTimer)}`, '#ff8438');
+    if (p.speedBoost > 0) chip(`SP${Math.ceil(p.speedBoost)}`, '#4fc3e8');
+    if (this.shovelTimer > 0) chip(`FT${Math.ceil(this.shovelTimer)}`, '#d8b26a');
 
     // 右側開關提示（次要資訊，縮小淡化）
     ctx.font = `bold 12px ${M}`;

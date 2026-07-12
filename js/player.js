@@ -9,6 +9,8 @@ class Player extends Tank {
     this.lives = P.lives;
     this.invincible = P.invincibleTime; // 開場也給短暫無敵
     this.speedBoost = 0;                // 加速寶物剩餘秒數
+    this.powerTimer = 0;                // 強化砲彈剩餘秒數
+    this.starTier = 0;                  // 星星火力等級（死亡重置）
     this.dir = DIR.UP;
   }
 
@@ -20,14 +22,19 @@ class Player extends Tank {
     this.alive = true;
     this.cooldown = 0;
     this.invincible = P.invincibleTime;
-    this.speedBoost = 0; // 死亡清除 buff
+    this.speedBoost = 0; // 死亡清除全部 buff
+    this.powerTimer = 0;
+    this.starTier = 0;
   }
 
   update(dt, game, input) {
     this.updateTimers(dt);
     if (this.invincible > 0) this.invincible -= dt;
     if (this.speedBoost > 0) this.speedBoost -= dt;
-    this.speed = CONST.PLAYER.speed * (this.speedBoost > 0 ? CONST.POWERUP.speedMult : 1);
+    if (this.powerTimer > 0) this.powerTimer -= dt;
+    const PU = CONST.POWERUP;
+    this.speed = CONST.PLAYER.speed * (this.speedBoost > 0 ? PU.speedMult : 1);
+    this.maxBullets = CONST.PLAYER.maxBullets + (this.starTier >= 2 ? 1 : 0);
 
     const dir = input.currentDir();
     if (dir !== null) {
@@ -36,8 +43,10 @@ class Player extends Tank {
     }
 
     if (input.isDown('Space') && this.canShoot()) {
-      this.shoot(game, 'player', CONST.PLAYER.bulletSpeed);
-      this.cooldown = CONST.PLAYER.cooldown;
+      const bSpeed = CONST.PLAYER.bulletSpeed * (this.starTier >= 1 ? PU.starBulletSpeedMult : 1);
+      const b = this.shoot(game, 'player', bSpeed);
+      if (b && this.powerTimer > 0) b.pierce = true;
+      this.cooldown = CONST.PLAYER.cooldown * (this.starTier >= 1 ? PU.starCooldownMult : 1);
       audioSys.playerShoot();
     }
   }

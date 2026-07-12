@@ -25,6 +25,13 @@ const MACRO_MAP = [
 
 const CHAR_TO_TILE = { '.': T.EMPTY, 'B': T.BRICK, 'S': T.STEEL, 'W': T.WATER, 'G': T.GRASS };
 
+/* 基地防禦磚牆環（小格座標），鏟子道具加固/還原共用 */
+const BASE_RING = Object.freeze([
+  [27, 18], [28, 18], [29, 18],
+  [27, 21], [28, 21], [29, 21],
+  [27, 19], [27, 20],
+]);
+
 class GameMap {
   constructor() {
     this.grid = [];   // grid[row][col] = { type, hp }
@@ -52,13 +59,25 @@ class GameMap {
         this.grid[r][c] = { type: T.EMPTY, hp: 0 };
       }
     }
-    const ring = [
-      [27, 18], [28, 18], [29, 18],
-      [27, 21], [28, 21], [29, 21],
-      [27, 19], [27, 20],
-    ];
-    for (const [r, c] of ring) {
+    for (const [r, c] of BASE_RING) {
       this.grid[r][c] = { type: T.BRICK, hp: CONST.BRICK_HP };
+    }
+  }
+
+  /* 鏟子道具：基地磚牆環變鋼牆（含修復缺口）；到期還原為全新磚牆。
+     tanks：被坦克壓住的格子跳過，避免把坦克封進牆裡。 */
+  fortifyBase(steel, tanks) {
+    const t = CONST.TILE;
+    for (const [r, c] of BASE_RING) {
+      let occupied = false;
+      for (const tk of tanks || []) {
+        const tr = tk.rect;
+        if (aabbOverlap(c * t, r * t, t, t, tr.x, tr.y, tr.w, tr.h)) { occupied = true; break; }
+      }
+      if (occupied) continue;
+      this.grid[r][c] = steel
+        ? { type: T.STEEL, hp: 0 }
+        : { type: T.BRICK, hp: CONST.BRICK_HP };
     }
   }
 
@@ -85,47 +104,51 @@ class GameMap {
     return false;
   }
 
-  /* 子彈命中處理：回傳 'brick' | 'steel' | null。
-     命中磚牆時對垂直於飛行方向 ±expand 範圍的磚格造成傷害（破口約兩格寬）。 */
-  bulletImpact(x, y, w, h, dir, particles) {
+  /* 子彈命中處理：回傳 'brick' | 'steel' | 'steel-broken' | null。
+     命中磚牆時對垂直於飛行方向 ±expand 範圍的磚格造成傷害（破口約兩格寬）。
+     pierce（強化砲彈）：磚牆一發全毀，鋼牆同磚牆邏輯直接摧毀。 */
+  bulletImpact(x, y, w, h, dir, particles, pierce) {
     const t = CONST.TILE;
     const c0 = Math.floor(x / t), c1 = Math.floor((x + w - 0.01) / t);
     const r0 = Math.floor(y / t), r1 = Math.floor((y + h - 0.01) / t);
     let hitBrick = false, hitSteel = false;
-    let impactRow = -1, impactCol = -1;
     for (let r = r0; r <= r1; r++) {
       for (let c = c0; c <= c1; c++) {
         const cell = this.cell(c, r);
         if (!cell) continue;
-        if (cell.type === T.BRICK) { hitBrick = true; impactRow = r; impactCol = c; }
+        if (cell.type === T.BRICK) hitBrick = true;
         else if (cell.type === T.STEEL) hitSteel = true;
       }
     }
-    if (hitBrick) {
-      // 沿垂直軸擴大破壞範圍：上下向 → 左右擴 1 格；左右向 → 上下擴 1 格
-      const cells = [];
-      const vertical = (dir === DIR.UP || dir === DIR.DOWN);
-      for (let r = r0; r <= r1; r++) {
-        for (let c = c0; c <= c1; c++) {
-          cells.push([r, c]);
-          if (vertical) { cells.push([r, c - 1]); cells.push([r, c + 1]); }
-          else { cells.push([r - 1, c]); cells.push([r + 1, c]); }
-        }
+    if (!hitBrick && !hitSteel) return null;
+    if (hitSteel && !pierce) return 'steel';
+
+    // 沿垂直軸擴大破壞範圍：上下向 → 左右擴 1 格；左右向 → 上下擴 1 格
+    const cells = [];
+    const vertical = (dir === DIR.UP || dir === DIR.DOWN);
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) {
+        cells.push([r, c]);
+        if (vertical) { cells.push([r, c - 1]); cells.push([r, c + 1]); }
+        else { cells.push([r - 1, c]); cells.push([r + 1, c]); }
       }
-      for (const [r, c] of cells) {
-        const cell = this.cell(c, r);
-        if (cell && cell.type === T.BRICK) {
-          cell.hp--;
-          if (cell.hp <= 0) {
-            cell.type = T.EMPTY;
-            if (particles) particles.brickDebris(c * t + t / 2, r * t + t / 2);
-          }
-        }
-      }
-      return 'brick';
     }
-    if (hitSteel) return 'steel';
-    return null;
+    const dmg = pierce ? CONST.BRICK_HP : 1;
+    for (const [r, c] of cells) {
+      const cell = this.cell(c, r);
+      if (!cell) continue;
+      if (cell.type === T.BRICK) {
+        cell.hp -= dmg;
+        if (cell.hp <= 0) {
+          cell.type = T.EMPTY;
+          if (particles) particles.brickDebris(c * t + t / 2, r * t + t / 2);
+        }
+      } else if (cell.type === T.STEEL && pierce) {
+        cell.type = T.EMPTY;
+        if (particles) particles.brickDebris(c * t + t / 2, r * t + t / 2);
+      }
+    }
+    return hitSteel ? 'steel-broken' : 'brick';
   }
 
   /* 檢查某方向直線上是否無阻擋（供敵人視線判斷）。 */

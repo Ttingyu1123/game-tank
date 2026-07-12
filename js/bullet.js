@@ -19,6 +19,7 @@ class Bullet {
     this.ownerRef = ownerRef || null;
     this.size = CONST.BULLET_SIZE;
     this.dead = false;
+    this.pierce = false; // 強化砲彈：可破鋼牆（由發射者設定）
   }
 
   get rect() {
@@ -35,13 +36,14 @@ class Bullet {
 
   draw(ctx) {
     const s = this.size;
-    ctx.fillStyle = this.owner === 'player' ? '#ffe9a8' : '#ff9d8a';
+    ctx.fillStyle = this.pierce ? '#ff8438' : (this.owner === 'player' ? '#ffe9a8' : '#ff9d8a');
     ctx.beginPath();
-    ctx.arc(this.x, this.y, s / 2, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.pierce ? s * 0.62 : s / 2, 0, Math.PI * 2);
     ctx.fill();
     // 尾焰
     const v = DIR_VECS[this.dir];
-    ctx.fillStyle = this.owner === 'player' ? 'rgba(255,210,100,0.5)' : 'rgba(255,120,90,0.5)';
+    ctx.fillStyle = this.pierce ? 'rgba(255,132,56,0.55)'
+      : (this.owner === 'player' ? 'rgba(255,210,100,0.5)' : 'rgba(255,120,90,0.5)');
     ctx.beginPath();
     ctx.arc(this.x - v.x * s * 0.8, this.y - v.y * s * 0.8, s / 3, 0, Math.PI * 2);
     ctx.fill();
