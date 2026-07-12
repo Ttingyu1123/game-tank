@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRON VANGUARD — 操作與寶物完全指南</title>
+<style>
+  :root {
+    --bg: #10141c;
+    --panel: #161a24;
+    --line: rgba(159, 176, 198, 0.18);
+    --text: #c7d0dc;
+    --muted: #67738a;
+    --gold: #f0c040;
+    --amber: #ffe08a;
+    --green: #8ee08a;
+    --blue: #8ab8ff;
+    --cyan: #4fc3e8;
+    --red: #ff5d5d;
+    --orange: #ff8438;
+    --shovel: #d8b26a;
+    --mono: 'Consolas', 'Menlo', 'Courier New', monospace;
+    --cjk: 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--cjk);
+    line-height: 1.75;
+    padding: 32px 16px 64px;
+  }
+  main { max-width: 860px; margin: 0 auto; }
+  h1 {
+    font-family: var(--mono);
+    color: var(--gold);
+    letter-spacing: 6px;
+    font-size: 34px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.85);
+    margin-bottom: 4px;
+  }
+  .subtitle { color: var(--muted); margin-bottom: 28px; }
+  h2 {
+    font-family: var(--mono);
+    color: var(--amber);
+    letter-spacing: 3px;
+    font-size: 20px;
+    margin: 40px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  h3 { color: var(--blue); font-size: 16px; margin: 22px 0 8px; }
+  p { margin-bottom: 10px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14.5px;
+    background: var(--panel);
+  }
+  th, td { padding: 9px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-size: 12px; letter-spacing: 1.5px; font-family: var(--mono); }
+  kbd {
+    font-family: var(--mono);
+    background: #232837;
+    border: 1px solid var(--line);
+    border-bottom-width: 3px;
+    border-radius: 4px;
+    padding: 1px 8px;
+    color: var(--amber);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .tip {
+    background: var(--panel);
+    border-left: 3px solid var(--gold);
+    padding: 10px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .tip b { color: var(--amber); }
+  .icon {
+    display: inline-block;
+    width: 26px; height: 26px;
+    border-radius: 4px;
+    border: 2px solid;
+    background: var(--panel);
+    text-align: center;
+    line-height: 24px;
+    font-size: 15px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  a { color: var(--cyan); }
+  .back {
+    display: inline-block;
+    margin-top: 36px;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-decoration: none;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 10px 22px;
+  }
+  .back:hover { background: rgba(240, 192, 64, 0.12); }
+  footer { color: var(--muted); font-size: 13px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>IRON VANGUARD</h1>
+  <p class="subtitle">操作與寶物完全指南 — 守住基地，撐過 5 波進攻</p>
+
+  <h2>遊戲目標</h2>
+  <p>你操控金色坦克，保護畫面底部中央的<b style="color:var(--gold)">基地（金星圖徽）</b>。基地被任何砲彈打中一發就毀，基地毀＝立即失敗——<b>包括你自己的砲彈</b>，走火請小心。清光一波的所有敵人就進下一波，撐過全部 <b>5 波</b>即勝利。你有 3 條命，被打中損失一條，在出生點重生並附 3 秒無敵。</p>
+
+  <h2>操作</h2>
+  <table>
+    <tr><th>按鍵</th><th>功能</th></tr>
+    <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 或 <kbd>↑</kbd> <kbd>←</kbd> <kbd>↓</kbd> <kbd>→</kbd></td><td>四方向移動（長按持續移動，轉彎時會自動吸附走道，不易卡牆角）</td></tr>
+    <tr><td><kbd>Space</kbd></td><td>射擊（可長按連射；有冷卻，同時在場砲彈數有限）</td></tr>
+    <tr><td><kbd>P</kbd></td><td>暫停 / 繼續</td></tr>
+    <tr><td><kbd>M</kbd> / <kbd>B</kbd></td><td>音效開關 / 背景音樂開關</td></tr>
+    <tr><td><kbd>R</kbd></td><td>結束（勝利或失敗）後重新開始</td></tr>
+  </table>
+
+  <h2>看懂畫面（HUD）</h2>
+  <table>
+    <tr><th>欄位</th><th>意義</th></tr>
+    <tr><td>SCORE</td><td>目前分數（擊毀敵人 + 波次獎勵 + 部分寶物）</td></tr>
+    <tr><td>LIVES</td><td>剩餘生命</td></tr>
+    <tr><td>WAVE</td><td>目前波次 / 總波數</td></tr>
+    <tr><td>ENEMIES</td><td>本波剩餘敵人（含還沒出場的）</td></tr>
+    <tr><td>BASE</td><td>基地狀態（OK / LOST）</td></tr>
+    <tr><td>★ / PW / SP / FT</td><td>進行中的強化：星星等級、強化砲彈倒數、加速倒數、基地加固倒數（單位：秒）</td></tr>
+  </table>
+  <p>場上閃爍的<b style="color:var(--red)">紅色菱形</b>是敵人出生警示——那個位置即將出現敵人，可以提前守株待兔。</p>
+
+  <h2>地形</h2>
+  <table>
+    <tr><th>地形</th><th>坦克</th><th>砲彈</th><th>備註</th></tr>
+    <tr><td>🟫 磚牆</td><td>擋</td><td>擋</td><td>可破壞。每格兩發，打出的破口約兩格寬</td></tr>
+    <tr><td>⬜ 鋼牆</td><td>擋</td><td>擋</td><td>普通砲彈打不壞；只有「強化砲彈」寶物能打穿</td></tr>
+    <tr><td>🟦 水面</td><td>擋</td><td>過</td><td>你過不去，但可以隔水對射</td></tr>
+    <tr><td>🟩 草叢</td><td>過</td><td>過</td><td>蓋在坦克上方、部分遮蔽——可以躲，但敵人也可以</td></tr>
+  </table>
+
+  <h2>敵人圖鑑</h2>
+  <table>
+    <tr><th>類型</th><th>特徵</th><th>耐久</th><th>分數</th><th>對策</th></tr>
+    <tr><td style="color:#aab2bf"><b>普通型（灰）</b></td><td>中速，向基地推進</td><td>1 發</td><td>100</td><td>正面對決即可</td></tr>
+    <tr><td style="color:var(--cyan)"><b>快速型（青）</b></td><td>速度快、轉向頻繁</td><td>1 發</td><td>150</td><td>別追，卡住走道等它自己撞上來</td></tr>
+    <tr><td style="color:var(--red)"><b>重裝型（紅）</b></td><td>慢但厚，頭上有血條</td><td>4 發</td><td>300</td><td>優先集火，別讓它慢慢磨基地的牆</td></tr>
+  </table>
+  <p>敵人會朝基地推進、偶爾轉頭追你、和你同一直線時會開火，卡住時甚至會射牆開路——別以為躲在磚牆後就永遠安全。</p>
+
+  <h2>寶物圖鑑（重點！）</h2>
+  <p>擊毀敵人有 <b>25%</b> 機率掉落寶物，<b>開過去就撿</b>。寶物停留 10 秒，最後 3 秒會閃爍提醒。共七種：</p>
+  <table>
+    <tr><th>寶物</th><th>效果</th><th>使用心得</th></tr>
+    <tr><td><span class="icon" style="color:var(--green);border-color:var(--green)">✚</span><b style="color:var(--green)">醫療補給</b></td><td>+1 條命（上限 5；滿命時改給 500 分）</td><td>看到就撿，沒有理由猶豫</td></tr>
+    <tr><td><span class="icon" style="color:var(--cyan);border-color:var(--cyan)">≫</span><b style="color:var(--cyan)">加速</b></td><td>8 秒內移動速度 ×1.45，車尾有氣流特效</td><td>搶時間撿別的寶物、或快速回防基地時最好用</td></tr>
+    <tr><td><span class="icon" style="color:var(--blue);border-color:var(--blue)">🛡</span><b style="color:var(--blue)">護盾</b></td><td>6 秒無敵（藍色護盾圈）</td><td>趁無敵大膽衝進敵陣換位置；注意基地不跟著無敵</td></tr>
+    <tr><td><span class="icon" style="color:var(--orange);border-color:var(--orange)">▲</span><b style="color:var(--orange)">強化砲彈</b></td><td>15 秒內砲彈變橘色：鋼牆直接打穿、磚牆一發全毀</td><td>平常打不到的角度都打得到了，開新路線包抄敵人</td></tr>
+    <tr><td><span class="icon" style="color:var(--shovel);border-color:var(--shovel)">⛏</span><b style="color:var(--shovel)">鏟子</b></td><td>基地周圍磚牆升級成鋼牆 15 秒，連被打破的缺口一起修好；到期變回全新磚牆</td><td>基地牆快被磨穿時是救命神器；HUD 的 FT 倒數歸零前記得回防</td></tr>
+    <tr><td><span class="icon" style="color:var(--amber);border-color:var(--amber)">★</span><b style="color:var(--amber)">星星</b></td><td>火力升級：第 1 顆加射速與彈速、第 2 顆同時在場砲彈 +1；<b style="color:var(--red)">死亡就歸零</b>（滿級再撿改給 500 分）</td><td>吃滿兩顆的火力非常兇，但命也變得更貴——高風險高報酬</td></tr>
+    <tr><td><span class="icon" style="color:var(--red);border-color:var(--red)">●</span><b style="color:var(--red)">炸彈</b></td><td>場上敵人全部即時炸毀，照常計分（最稀有）</td><td>忍到場上敵人最多、或兩隻重裝同時在場再撿，賺最大</td></tr>
+  </table>
+  <div class="tip"><b>寶物策略：</b>寶物只有 10 秒——但不用急著秒撿。炸彈可以故意留到敵人變多，鏟子可以留到牆快破。「什麼時候撿」跟「撿不撿得到」一樣重要。</div>
+
+  <h2>波次與計分</h2>
+  <table>
+    <tr><th>波次</th><th>敵人組成</th></tr>
+    <tr><td>WAVE 1–2</td><td>普通型為主，熟悉地圖與節奏</td></tr>
+    <tr><td>WAVE 3</td><td>快速型加入，開始需要卡位</td></tr>
+    <tr><td>WAVE 4</td><td>重裝型登場，優先集火</td></tr>
+    <tr><td>WAVE 5</td><td>大量混編，同場敵人上限也更高——寶物留給這一波</td></tr>
+  </table>
+  <p>計分：普通 100 / 快速 150 / 重裝 300；每完成一波額外獎勵 300 × 波數；滿命撿補給、滿級撿星星各 +500。</p>
+
+  <h2>進階技巧</h2>
+  <table>
+    <tr><th>#</th><th>技巧</th></tr>
+    <tr><td>1</td><td><b>砲彈能互相抵消</b>：看到敵彈迎面飛來，對準發射可以在空中攔截</td></tr>
+    <tr><td>2</td><td><b>磚牆破口約兩格寬</b>：打牆是「開門」，也等於幫敵人開門，想清楚再拆</td></tr>
+    <tr><td>3</td><td><b>基地怕你自己</b>：在基地附近朝下射擊前，先看清楚彈道</td></tr>
+    <tr><td>4</td><td><b>紅色菱形警示 = 免費情報</b>：敵人出生位置提前 1 秒公告，先把砲口對過去</td></tr>
+    <tr><td>5</td><td><b>重生有 3 秒無敵</b>：死亡不全是壞事，利用無敵時間穿越火線回防</td></tr>
+    <tr><td>6</td><td><b>隔水射擊零風險</b>：水面擋坦克不擋砲彈，是天然的射擊掩體</td></tr>
+  </table>
+
+  <a class="back" href="./index.html">▶ 開始遊戲</a>
+
+  <footer>
+    IRON VANGUARD — 純 HTML5 Canvas 打造，無框架、無外部素材、可離線遊玩。
+    <a href="https://github.com/Ttingyu1123/game-tank">原始碼</a> ·
+    <a href="https://tingyudeco.com/blog/behind-the-scenes-iron-vanguard">開發幕後故事</a>
+  </footer>
+</main>
+</body>
+</html>
