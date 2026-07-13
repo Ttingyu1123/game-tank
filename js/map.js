@@ -5,23 +5,68 @@
 /* 固定地圖設計（20 欄 x 15 列）：
    . 空地  B 磚牆  S 鋼牆  W 水面  G 草叢
    底部中央的基地區域由程式另行雕刻（清空 + 磚牆環 + 基地）。 */
-const MACRO_MAP = [
-  '....................',
-  '.BB.BB.BB..BB.BB.BB.',
-  '.BB.BB.BB..BB.BB.BB.',
-  '.BB.BB.BB..BB.BB.BB.',
-  '....................',
-  '.SS....BB..BB....SS.',
-  '....GG.B....B.GG....',
-  'WW..GG.B.SS.B.GG..WW',
-  'WW..GG.B.SS.B.GG..WW',
-  '....GG.B....B.GG....',
-  '.BB....BB..BB....BB.',
-  '.BB..............BB.',
-  '....BB.SS..SS.BB....',
-  '.BB.BB........BB.BB.',
-  '....................',
-];
+const MAP_SCENES = Object.freeze([
+  Object.freeze({
+    name: '經典戰場',
+    map: Object.freeze([
+      '....................',
+      '.BB.BB.BB..BB.BB.BB.',
+      '.BB.BB.BB..BB.BB.BB.',
+      '.BB.BB.BB..BB.BB.BB.',
+      '....................',
+      '.SS....BB..BB....SS.',
+      '....GG.B....B.GG....',
+      'WW..GG.B.SS.B.GG..WW',
+      'WW..GG.B.SS.B.GG..WW',
+      '....GG.B....B.GG....',
+      '.BB....BB..BB....BB.',
+      '.BB..............BB.',
+      '....BB.SS..SS.BB....',
+      '.BB.BB........BB.BB.',
+      '....................',
+    ]),
+  }),
+  Object.freeze({
+    name: '河川要塞',
+    map: Object.freeze([
+      '....................',
+      '.BB....WW..WW....BB.',
+      '.BB....WW..WW....BB.',
+      '....BB.WW..WW.BB....',
+      '.SS....WW..WW....SS.',
+      '......B....B........',
+      '..GG..B.SS.B..GG....',
+      'WWGG..B....B..GG..WW',
+      'WWGG..B....B..GG..WW',
+      '..GG....BB....GG....',
+      '....SS......SS......',
+      '.BB....BBBB....BB...',
+      '....BB......BB......',
+      '.BB......BB......BB.',
+      '....................',
+    ]),
+  }),
+  Object.freeze({
+    name: '鋼鐵迷宮',
+    map: Object.freeze([
+      '....................',
+      '.SS.BB.SS..SS.BB.SS.',
+      '....BB........BB....',
+      '.BB.SS.BBBBBB.SS.BB.',
+      '.BB....B....B....BB.',
+      '....SS.B.SS.B.SS....',
+      '.GG...B....B...GG...',
+      '.BBBB.SS..SS.BBBB...',
+      '....B..........B....',
+      '.SS.B.BB..BB.B.SS...',
+      '....B...SS...B......',
+      '.BB..BB....BB..BB...',
+      '....SS......SS......',
+      '.BB...SS..SS...BB...',
+      '....................',
+    ]),
+  }),
+]);
 
 const CHAR_TO_TILE = { '.': T.EMPTY, 'B': T.BRICK, 'S': T.STEEL, 'W': T.WATER, 'G': T.GRASS };
 
@@ -35,15 +80,29 @@ const BASE_RING = Object.freeze([
 class GameMap {
   constructor() {
     this.grid = [];   // grid[row][col] = { type, hp }
+    this.sceneIndex = 0;
+    this.sceneName = MAP_SCENES[0].name;
     this.reset();
   }
 
   reset() {
+    this.loadScene(0);
+  }
+
+  get sceneCount() {
+    return MAP_SCENES.length;
+  }
+
+  loadScene(index) {
+    const normalized = ((index % this.sceneCount) + this.sceneCount) % this.sceneCount;
+    const scene = MAP_SCENES[normalized];
+    this.sceneIndex = normalized;
+    this.sceneName = scene.name;
     this.grid = [];
     for (let r = 0; r < CONST.ROWS; r++) {
       const row = [];
       for (let c = 0; c < CONST.COLS; c++) {
-        const ch = MACRO_MAP[r >> 1][c >> 1];
+        const ch = scene.map[r >> 1][c >> 1];
         const type = CHAR_TO_TILE[ch];
         row.push({ type, hp: type === T.BRICK ? CONST.BRICK_HP : 0 });
       }

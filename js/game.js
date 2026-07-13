@@ -55,12 +55,26 @@ class Game {
   _enterWave(index) {
     this.waveIndex = index;
     const wave = CONST.WAVES[index];
+    this.map.loadScene(index);
+    this.enemies = [];
+    this.bullets = [];
+    this.powerups = [];
+    this.floatTexts = [];
+    this.particles.reset();
     this.spawnList = wave.list.slice();
     this.spawnWarns = [];
     this.spawnTimer = 0.5; // 波次開始後稍等再生成
     // 玩家在重生倒數中跨波：立即重生。否則 PLAYER_RESPAWNING 被覆蓋成
     // WAVE_TRANSITION 後重生計時器永不觸發，玩家有命卻永遠回不來。
-    if (this.player && !this.player.alive && this.player.lives > 0) this.player.respawn();
+    if (this.player && this.player.lives > 0) {
+      this.player.x = CONST.PLAYER.spawnX;
+      this.player.y = CONST.PLAYER.spawnY;
+      this.player.dir = DIR.UP;
+      this.player.alive = true;
+      this.player.cooldown = 0;
+      this.player.invincible = Math.max(this.player.invincible, CONST.PLAYER.invincibleTime);
+    }
+    if (this.shovelTimer > 0) this.map.fortifyBase(true, this.allTanks());
     this.state = STATE.WAVE_TRANSITION;
     this.transitionTimer = CONST.WAVE_TRANSITION_TIME;
     audioSys.waveStart();
@@ -640,12 +654,14 @@ class Game {
       }
       case STATE.WAVE_TRANSITION: {
         ctx.fillStyle = 'rgba(5, 7, 12, 0.55)';
-        ctx.fillRect(0, H / 2 - 72, W, 132);
-        this._title(ctx, `WAVE ${this.waveIndex + 1}`, W / 2, H / 2 - 12, 48, '#8ab8ff', 6);
+        ctx.fillRect(0, H / 2 - 88, W, 164);
+        this._title(ctx, `WAVE ${this.waveIndex + 1}`, W / 2, H / 2 - 28, 48, '#8ab8ff', 6);
         ctx.fillStyle = '#9fb0c6';
         ctx.font = `bold 15px ${M}`;
+        ctx.letterSpacing = '2px';
+        ctx.fillText(this.map.sceneName, W / 2, H / 2 + 10);
         ctx.letterSpacing = '5px';
-        ctx.fillText('READY...', W / 2, H / 2 + 32);
+        ctx.fillText('READY...', W / 2, H / 2 + 46);
         ctx.letterSpacing = '0px';
         break;
       }

@@ -1,5 +1,11 @@
 # IRON VANGUARD — 坦克保衛戰
 
+## 多場景輪替
+
+五個波次會自動輪替三張場景：經典戰場、河川要塞、鋼鐵迷宮。進入下一波時會載入新地形並清除上一波的子彈、道具與特效；分數、生命與玩家強化狀態會保留。波次提示畫面會顯示目前場景名稱。
+
+可用 `python test/multi_scene_test.py` 單獨驗證場景輪替。
+
 **線上遊玩**：<https://game-tank.tingyudeco.com/>　**遊戲攻略**：<https://game-tank.tingyudeco.com/guide.html>
 
 2D 俯視角坦克射擊遊戲。玩家操控坦克在迷宮化競技場中保護基地，擊退 5 波敵方坦克進攻。
