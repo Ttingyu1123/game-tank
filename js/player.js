@@ -42,7 +42,7 @@ class Player extends Tank {
       this.move(dt, game);
     }
 
-    if (input.isDown('Space') && this.canShoot()) {
+    if (input.fireHeld() && this.canShoot()) {
       const bSpeed = CONST.PLAYER.bulletSpeed * (this.starTier >= 1 ? PU.starBulletSpeedMult : 1);
       const b = this.shoot(game, 'player', bSpeed);
       if (b && this.powerTimer > 0) b.pierce = true;

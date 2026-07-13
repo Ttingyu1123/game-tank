@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>IRON VANGUARD — 坦克保衛戰</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -17,16 +17,24 @@
   </div>
   <footer>
     <div class="controls">
-      <span><b>WASD / 方向鍵</b> 移動</span>
-      <span><b>Space</b> 射擊</span>
-      <span><b>P</b> 暫停</span>
-      <span><b>M</b> 音效開關</span>
-      <span><b>B</b> 音樂開關</span>
-      <span><b>R</b> 結束後重新開始</span>
+      <span class="key-hint"><b>WASD / 方向鍵</b> 移動</span>
+      <span class="key-hint"><b>Space</b> 射擊</span>
+      <span class="key-hint"><b>P</b> 暫停</span>
+      <span class="key-hint"><b>M</b> 音效開關</span>
+      <span class="key-hint"><b>B</b> 音樂開關</span>
+      <span class="key-hint"><b>R</b> 結束後重新開始</span>
       <span><a href="./guide.html" style="color:#f0c040">📖 完整攻略</a></span>
       <span><a href="https://tingyudeco.com/portfolio/tools" style="color:#f0c040">🏠 更多作品</a></span>
     </div>
   </footer>
+</div>
+<!-- 觸控操作層：coarse pointer 裝置由 touch.js 解除 hidden -->
+<div id="touch-ui" hidden>
+  <div id="stick-zone">
+    <div id="stick-base"><div id="stick-knob"></div></div>
+  </div>
+  <button id="btn-fire" type="button">FIRE</button>
+  <button id="btn-pause" type="button">❚❚</button>
 </div>
 <script src="js/constants.js"></script>
 <script src="js/audio.js"></script>
@@ -38,6 +46,7 @@
 <script src="js/player.js"></script>
 <script src="js/enemy.js"></script>
 <script src="js/game.js"></script>
+<script src="js/touch.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -76,3 +76,97 @@ footer {
   color: #9fb0c6;
   font-family: Consolas, Menlo, "Courier New", monospace;
 }
+
+/* ---------- 觸控操作層（touch.js 於 coarse pointer 裝置解除 hidden） ---------- */
+
+#touch-ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* 只有子元素可互動，不擋畫面 */
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 左半屏下方為搖桿感應區：手指落點即搖桿原點 */
+#stick-zone {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 62%;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#stick-base {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 2px solid rgba(159, 176, 198, 0.45);
+  border-radius: 50%;
+  background: rgba(16, 20, 28, 0.35);
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+#stick-base.active { display: block; }
+
+#stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(240, 192, 64, 0.75);
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.5);
+  transform: translate(-50%, -50%);
+}
+
+#btn-fire {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(36px, env(safe-area-inset-bottom));
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px solid rgba(240, 192, 64, 0.7);
+  background: rgba(240, 192, 64, 0.18);
+  color: #f0c040;
+  font: bold 18px Consolas, Menlo, "Courier New", monospace;
+  letter-spacing: 2px;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#btn-fire:active { background: rgba(240, 192, 64, 0.45); }
+
+#btn-pause {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  top: max(12px, env(safe-area-inset-top));
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid rgba(159, 176, 198, 0.5);
+  background: rgba(16, 20, 28, 0.5);
+  color: #9fb0c6;
+  font-size: 14px;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* 觸控裝置：隱藏鍵盤提示、畫布禁用瀏覽器手勢、
+   標題縮小避開暫停鈕、畫布靠上留出下方操作空間 */
+body.touch-mode .key-hint { display: none; }
+body.touch-mode canvas#game { touch-action: none; }
+body.touch-mode header {
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-right: 64px;
+  padding-left: 64px;
+}
+body.touch-mode header h1 { font-size: 18px; letter-spacing: 5px; padding-left: 5px; }
+body.touch-mode .subtitle { font-size: 11px; letter-spacing: 2px; }
+body.touch-mode #canvas-wrap { align-items: flex-start; }

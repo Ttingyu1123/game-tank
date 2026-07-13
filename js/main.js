@@ -2,11 +2,14 @@
 /* 進入點：輸入監聽（只註冊一次）、單一 requestAnimationFrame 迴圈。
    重新開始只重置 Game 狀態，不重建迴圈。 */
 
-/* 鍵盤輸入：方向鍵堆疊（後按優先），提供持續按住查詢 */
+/* 鍵盤輸入：方向鍵堆疊（後按優先），提供持續按住查詢。
+   觸控（touch.js）直接寫入 touchDir / touchFire，優先於鍵盤。 */
 class Input {
   constructor() {
     this.down = new Set();
     this.dirStack = []; // 目前按住的方向鍵，最後按的優先
+    this.touchDir = null;
+    this.touchFire = false;
   }
 
   static dirOf(code) {
@@ -35,10 +38,13 @@ class Input {
   }
 
   currentDir() {
+    if (this.touchDir !== null) return this.touchDir;
     return this.dirStack.length > 0 ? this.dirStack[this.dirStack.length - 1] : null;
   }
 
   isDown(code) { return this.down.has(code); }
+
+  fireHeld() { return this.touchFire || this.down.has('Space'); }
 }
 
 (function bootstrap() {
@@ -62,6 +68,9 @@ class Input {
   });
 
   window.addEventListener('pointerdown', () => audioSys.ensure());
+
+  // 觸控裝置：虛擬搖桿與射擊鈕（touch.js；非觸控裝置內部直接 return）
+  new TouchControls(input, game);
 
   // 單一遊戲迴圈；dt 有上限避免切換分頁後瞬移
   let last = performance.now();

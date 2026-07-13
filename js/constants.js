@@ -81,6 +81,9 @@ const CONST = Object.freeze({
   HUD_H: 30,
 });
 
+/* 觸控裝置偵測：主要指標為粗指標（手機/平板）時啟用虛擬搖桿與觸控提示 */
+const IS_TOUCH = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+
 /* 方向：0上 1右 2下 3左 */
 const DIR = Object.freeze({ UP: 0, RIGHT: 1, DOWN: 2, LEFT: 3 });
 const DIR_VECS = Object.freeze([

@@ -624,12 +624,16 @@ class Game {
         ctx.fillText('坦克保衛戰 — 守住基地，撐過 5 波進攻', W / 2, H / 2 - 62);
         ctx.font = `15px ${C}`;
         ctx.fillStyle = '#6b7686';
-        ctx.fillText('WASD / 方向鍵 移動 ・ Space 射擊 ・ P 暫停 ・ M 音效 ・ B 音樂', W / 2, H / 2 + 6);
+        ctx.fillText(
+          IS_TOUCH
+            ? '左側搖桿 移動 ・ FIRE 射擊 ・ ❚❚ 暫停'
+            : 'WASD / 方向鍵 移動 ・ Space 射擊 ・ P 暫停 ・ M 音效 ・ B 音樂',
+          W / 2, H / 2 + 6);
         if (Math.floor(this.timeGlobal * 2) % 2 === 0) {
           ctx.fillStyle = '#ffe08a';
           ctx.font = `bold 22px ${M}`;
           ctx.letterSpacing = '3px';
-          ctx.fillText('PRESS ENTER TO START', W / 2, H / 2 + 72);
+          ctx.fillText(IS_TOUCH ? 'TAP TO START' : 'PRESS ENTER TO START', W / 2, H / 2 + 72);
           ctx.letterSpacing = '0px';
         }
         break;
@@ -650,7 +654,7 @@ class Game {
         this._title(ctx, 'PAUSED', W / 2, H / 2 - 12, 46, '#ffe08a', 6);
         ctx.fillStyle = '#9fb0c6';
         ctx.font = `16px ${C}`;
-        ctx.fillText('按 P 繼續', W / 2, H / 2 + 32);
+        ctx.fillText(IS_TOUCH ? '按 ❚❚ 繼續' : '按 P 繼續', W / 2, H / 2 + 32);
         break;
       }
       case STATE.GAME_OVER: {
@@ -662,7 +666,7 @@ class Game {
         ctx.fillStyle = '#9fb0c6';
         ctx.font = `bold 17px ${M}`;
         ctx.letterSpacing = '2px';
-        ctx.fillText('PRESS R TO RESTART', W / 2, H / 2 + 56);
+        ctx.fillText(IS_TOUCH ? 'TAP TO RESTART' : 'PRESS R TO RESTART', W / 2, H / 2 + 56);
         ctx.letterSpacing = '0px';
         break;
       }
@@ -674,7 +678,7 @@ class Game {
         ctx.fillText(`SCORE ${this.score}`, W / 2, H / 2 + 10);
         ctx.fillStyle = '#9fb0c6';
         ctx.font = `16px ${C}`;
-        ctx.fillText('成功守住基地！按 R 再玩一次', W / 2, H / 2 + 56);
+        ctx.fillText(IS_TOUCH ? '成功守住基地！點擊畫面再玩一次' : '成功守住基地！按 R 再玩一次', W / 2, H / 2 + 56);
         break;
       }
     }
