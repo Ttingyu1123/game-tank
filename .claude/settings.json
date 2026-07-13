@@ -10,7 +10,13 @@
       "Bash(timeout 1200 bash -c 'until [ \"$\\(curl -s -o /dev/null -w \"%{http_code}\" --max-time 8 https://game-tank.tingyudeco.com/ 2>/dev/null\\)\" = \"200\" ]; do sleep 30; done')",
       "Bash(awk '/posts: collection/,/^  },$/' keystatic.config.tsx)",
       "Bash(awk '{ print length\\($0\\)+1, NR }' \"d:/VibeCoding/Bot/CLAUDE.md\")",
-      "Bash(grep -c '^---$' \"/d/VibeCoding/Speech Studio/CLAUDE.md\")"
+      "Bash(grep -c '^---$' \"/d/VibeCoding/Speech Studio/CLAUDE.md\")",
+      "Skill(codex:rescue)",
+      "Skill(codex:rescue:*)",
+      "Bash(sed -n 180:200p \"C:/Users/tingy/.claude/plugins/cache/openai-codex/codex/1.0.1/scripts/lib/app-server.mjs\" 2>/dev/null || sed -n '180,200p' \"C:/Users/tingy/.claude/plugins/cache/openai-codex/codex/1.0.1/scripts/lib/app-server.mjs\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\tingy\\.claude\\plugins\\cache\\openai-codex\\codex\\1.0.1\\scripts\\lib"
     ]
   }
 }
