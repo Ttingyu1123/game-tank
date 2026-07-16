@@ -668,7 +668,7 @@ class Game {
         this._title(ctx, 'IRON VANGUARD', W / 2, H / 2 - 108, 56, '#f0c040', 8);
         ctx.fillStyle = '#9fb0c6';
         ctx.font = `500 20px ${C}`;
-        ctx.fillText('坦克保衛戰 — 守住基地，撐過 5 波進攻', W / 2, H / 2 - 62);
+        ctx.fillText('坦克保衛戰 — 守住基地，撐過 6 波進攻', W / 2, H / 2 - 62);
         ctx.font = `15px ${C}`;
         ctx.fillStyle = '#6b7686';
         ctx.fillText(
