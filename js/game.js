@@ -41,6 +41,7 @@ class Game {
     // 計時器
     this.transitionTimer = 0;
     this.shovelTimer = 0;
+    this.freezeTimer = 0;
     this.respawnTimer = 0;
     this.endTimer = 0;
     this.endTarget = null;
@@ -171,7 +172,9 @@ class Game {
   _updateWorld(dt, input, includePlayer) {
     if (includePlayer && this.player.alive) this.player.update(dt, this, input);
 
-    for (const e of this.enemies) if (e.alive) e.update(dt, this);
+    // 冰凍中敵人完全靜止（不移動不開火），已飛出的砲彈照常
+    if (this.freezeTimer > 0) this.freezeTimer -= dt;
+    else for (const e of this.enemies) if (e.alive) e.update(dt, this);
     // 安全刪除：反向過濾已死亡敵人
     for (let i = this.enemies.length - 1; i >= 0; i--) {
       if (!this.enemies[i].alive) this.enemies.splice(i, 1);
@@ -392,6 +395,18 @@ class Game {
           text = `MAX +${P.maxLifeScore}`;
         }
         break;
+      case 'freeze':
+        this.freezeTimer = P.freezeDuration;
+        text = 'FREEZE!';
+        break;
+      case 'gun':
+        p.gunTimer = P.gunDuration;
+        text = 'RAPID FIRE!';
+        break;
+      case 'coin':
+        this.score += P.coinScore;
+        text = `+${P.coinScore}`;
+        break;
     }
     this.floatTexts.push({ x: pu.x, y: pu.y - 22, text, t: 0, maxT: 1.1 });
     audioSys.powerup();
@@ -482,6 +497,7 @@ class Game {
     this._drawBase(ctx);
     this._drawSpawnWarns(ctx);
     for (const e of this.enemies) e.draw(ctx);
+    this._drawFrozenTint(ctx);
     if (this.player.alive && this.state !== STATE.START) this.player.draw(ctx, this.time);
     for (const b of this.bullets) if (!b.dead) b.draw(ctx);
     this.map.drawGrass(ctx);
@@ -493,6 +509,21 @@ class Game {
 
     this._drawHUD(ctx);
     this._drawOverlay(ctx);
+  }
+
+  /* 冰凍中的敵人罩上冰藍色調；最後 2 秒閃爍提示即將解凍 */
+  _drawFrozenTint(ctx) {
+    if (this.freezeTimer <= 0) return;
+    if (this.freezeTimer < 2 && Math.floor(this.time * 6) % 2 === 0) return;
+    ctx.fillStyle = 'rgba(140, 215, 255, 0.35)';
+    ctx.strokeStyle = 'rgba(190, 235, 255, 0.7)';
+    ctx.lineWidth = 1.5;
+    for (const e of this.enemies) {
+      if (!e.alive) continue;
+      const r = e.rect;
+      ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.strokeRect(r.x + 1, r.y + 1, r.w - 2, r.h - 2);
+    }
   }
 
   _drawBase(ctx) {
@@ -599,7 +630,9 @@ class Game {
     if (p.starTier > 0) chip('★'.repeat(p.starTier), '#ffe08a');
     if (p.powerTimer > 0) chip(`PW${Math.ceil(p.powerTimer)}`, '#ff8438');
     if (p.speedBoost > 0) chip(`SP${Math.ceil(p.speedBoost)}`, '#4fc3e8');
+    if (p.gunTimer > 0) chip(`MG${Math.ceil(p.gunTimer)}`, '#e86bd0');
     if (this.shovelTimer > 0) chip(`FT${Math.ceil(this.shovelTimer)}`, '#d8b26a');
+    if (this.freezeTimer > 0) chip(`FZ${Math.ceil(this.freezeTimer)}`, '#9adcff');
 
     // 右側開關提示（次要資訊，縮小淡化）
     ctx.font = `bold 12px ${M}`;

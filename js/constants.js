@@ -47,6 +47,8 @@ const CONST = Object.freeze({
     Object.freeze({ list: ['normal','heavy','fast','normal','fast','heavy','normal'],                       maxAlive: 4, interval: 2.0 }),
     Object.freeze({ list: ['fast','normal','heavy','fast','normal','heavy','fast','normal','heavy',
                            'fast','normal'],                                                                 maxAlive: 5, interval: 1.8 }),
+    Object.freeze({ list: ['heavy','fast','heavy','fast','normal','heavy','fast','heavy','fast',
+                           'heavy','fast','heavy'],                                                          maxAlive: 5, interval: 1.6 }),
   ]),
   WAVE_BONUS: 300,          // 完成波次加分 = WAVE_BONUS * 波數
   WAVE_TRANSITION_TIME: 2.5,
@@ -71,6 +73,10 @@ const CONST = Object.freeze({
     starMaxTier: 2,        // 星星火力上限：1=射速/彈速up 2=+1同屏彈數
     starCooldownMult: 0.7,
     starBulletSpeedMult: 1.25,
+    freezeDuration: 8,     // 冰凍：敵人全體停止行動秒數
+    gunDuration: 8,        // 機關槍：連射持續秒數
+    gunCooldownMult: 0.45, // 機關槍：射擊冷卻倍率（與星星射速疊乘）
+    coinScore: 500,        // 金幣：即時加分
   }),
 
   // 字型堆疊：英數用銳利的系統等寬字型；中文明確指定黑體系，避免掉到預設襯線

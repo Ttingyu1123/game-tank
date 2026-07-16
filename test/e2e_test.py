@@ -316,7 +316,7 @@ def main():
         time.sleep(0.2)
         check("BGM 於 GAME_OVER 停止", page.evaluate("() => audioSys.musicOn") is False)
 
-        # 21-22. 波次切換 + 第 5 波完成 → VICTORY
+        # 21-22. 波次切換 + 最終波完成 → VICTORY
         page.keyboard.press("KeyR")
         wait_state(page, "PLAYING", timeout=5)
         page.evaluate("""() => {
@@ -334,12 +334,12 @@ def main():
         time.sleep(0.5)
         page.evaluate("""() => {
             const g = window.__game;
-            g.waveIndex = 4;
+            g.waveIndex = CONST.WAVES.length - 1;
             g.spawnList = []; g.spawnWarns = [];
             g.enemies.forEach(e => e.alive = false);
         }""")
         ok = wait_state(page, "VICTORY", timeout=4)
-        check("22. 第 5 波完成後 VICTORY", ok, f"state={g(page, 'g.state')}")
+        check("22. 最終波完成後 VICTORY", ok, f"state={g(page, 'g.state')}")
 
         # 28. 物件數量有界（無明顯累積）
         counts = g(page, "[g.bullets.length, g.particles.particles.length, g.enemies.length, g.floatTexts.length]")

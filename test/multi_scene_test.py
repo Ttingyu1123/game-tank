@@ -27,7 +27,7 @@ def main():
             };
         }""")
         assert initial == {
-            "sceneCount": 3,
+            "sceneCount": 6,
             "sceneIndex": 0,
             "sceneName": "經典戰場",
         }, initial
@@ -71,15 +71,16 @@ def main():
 
         sequence = page.evaluate("""() => {
             const g = window.__game;
-            return [2, 3, 4].map(wave => {
+            return [2, 3, 4, 5].map(wave => {
                 g._enterWave(wave);
                 return [g.map.sceneIndex, g.map.sceneName];
             });
         }""")
         assert sequence == [
             [2, "鋼鐵迷宮"],
-            [0, "經典戰場"],
-            [1, "河川要塞"],
+            [3, "沙洲運河"],
+            [4, "密林突擊"],
+            [5, "最終防線"],
         ], sequence
         assert errors == [], errors
 

@@ -110,10 +110,10 @@
 <body>
 <main>
   <h1>IRON VANGUARD</h1>
-  <p class="subtitle">操作與寶物完全指南 — 守住基地，撐過 5 波進攻</p>
+  <p class="subtitle">操作與寶物完全指南 — 守住基地，撐過 6 波進攻</p>
 
   <h2>遊戲目標</h2>
-  <p>你操控金色坦克，保護畫面底部中央的<b style="color:var(--gold)">基地（金星圖徽）</b>。基地被任何砲彈打中一發就毀，基地毀＝立即失敗——<b>包括你自己的砲彈</b>，走火請小心。清光一波的所有敵人就進下一波，撐過全部 <b>5 波</b>即勝利。你有 3 條命，被打中損失一條，在出生點重生並附 3 秒無敵。</p>
+  <p>你操控金色坦克，保護畫面底部中央的<b style="color:var(--gold)">基地（金星圖徽）</b>。基地被任何砲彈打中一發就毀，基地毀＝立即失敗——<b>包括你自己的砲彈</b>，走火請小心。清光一波的所有敵人就進下一波，撐過全部 <b>6 波</b>即勝利；每一波都會換到不同的地圖場景（共 6 張）。你有 3 條命，被打中損失一條，在出生點重生並附 3 秒無敵。</p>
 
   <h2>操作</h2>
   <table>
@@ -134,7 +134,7 @@
     <tr><td>WAVE</td><td>目前波次 / 總波數</td></tr>
     <tr><td>ENEMIES</td><td>本波剩餘敵人（含還沒出場的）</td></tr>
     <tr><td>BASE</td><td>基地狀態（OK / LOST）</td></tr>
-    <tr><td>★ / PW / SP / FT</td><td>進行中的強化：星星等級、強化砲彈倒數、加速倒數、基地加固倒數（單位：秒）</td></tr>
+    <tr><td>★ / PW / SP / MG / FT / FZ</td><td>進行中的強化：星星等級、強化砲彈、加速、機關槍、基地加固、敵人冰凍（數字為剩餘秒數）</td></tr>
   </table>
   <p>場上閃爍的<b style="color:var(--red)">紅色菱形</b>是敵人出生警示——那個位置即將出現敵人，可以提前守株待兔。</p>
 
@@ -157,7 +157,7 @@
   <p>敵人會朝基地推進、偶爾轉頭追你、和你同一直線時會開火，卡住時甚至會射牆開路——別以為躲在磚牆後就永遠安全。</p>
 
   <h2>寶物圖鑑（重點！）</h2>
-  <p>擊毀敵人有 <b>25%</b> 機率掉落寶物，<b>開過去就撿</b>。寶物停留 10 秒，最後 3 秒會閃爍提醒。共七種：</p>
+  <p>擊毀敵人有 <b>25%</b> 機率掉落寶物，<b>開過去就撿</b>。寶物停留 10 秒，最後 3 秒會閃爍提醒。共十種：</p>
   <table>
     <tr><th>寶物</th><th>效果</th><th>使用心得</th></tr>
     <tr><td><span class="icon" style="color:var(--green);border-color:var(--green)">✚</span><b style="color:var(--green)">醫療補給</b></td><td>+1 條命（上限 5；滿命時改給 500 分）</td><td>看到就撿，沒有理由猶豫</td></tr>
@@ -167,6 +167,9 @@
     <tr><td><span class="icon" style="color:var(--shovel);border-color:var(--shovel)">⛏</span><b style="color:var(--shovel)">鏟子</b></td><td>基地周圍磚牆升級成鋼牆 15 秒，連被打破的缺口一起修好；到期變回全新磚牆</td><td>基地牆快被磨穿時是救命神器；HUD 的 FT 倒數歸零前記得回防</td></tr>
     <tr><td><span class="icon" style="color:var(--amber);border-color:var(--amber)">★</span><b style="color:var(--amber)">星星</b></td><td>火力升級：第 1 顆加射速與彈速、第 2 顆同時在場砲彈 +1；<b style="color:var(--red)">死亡就歸零</b>（滿級再撿改給 500 分）</td><td>吃滿兩顆的火力非常兇，但命也變得更貴——高風險高報酬</td></tr>
     <tr><td><span class="icon" style="color:var(--red);border-color:var(--red)">●</span><b style="color:var(--red)">炸彈</b></td><td>場上敵人全部即時炸毀，照常計分（最稀有）</td><td>忍到場上敵人最多、或兩隻重裝同時在場再撿，賺最大</td></tr>
+    <tr><td><span class="icon" style="color:#9adcff;border-color:#9adcff">❄</span><b style="color:#9adcff">冰凍</b></td><td>8 秒內所有敵人原地凍結（不移動、不開火），已飛出的砲彈照常</td><td>凍住的敵人是活靶——趁機繞背收割重裝，或安心修整陣地</td></tr>
+    <tr><td><span class="icon" style="color:#e86bd0;border-color:#e86bd0">‖‖</span><b style="color:#e86bd0">機關槍</b></td><td>8 秒內射擊冷卻大幅縮短（可與星星射速疊加）</td><td>配合星星彈數上限效果翻倍；面對成群敵人時火力壓制全場</td></tr>
+    <tr><td><span class="icon" style="color:#ffd24a;border-color:#ffd24a">◉</span><b style="color:#ffd24a">金幣</b></td><td>即時 +500 分</td><td>純賺分，順路就撿；衝分刷紀錄時優先度提高</td></tr>
   </table>
   <div class="tip"><b>寶物策略：</b>寶物只有 10 秒——但不用急著秒撿。炸彈可以故意留到敵人變多，鏟子可以留到牆快破。「什麼時候撿」跟「撿不撿得到」一樣重要。</div>
 
@@ -176,8 +179,10 @@
     <tr><td>WAVE 1–2</td><td>普通型為主，熟悉地圖與節奏</td></tr>
     <tr><td>WAVE 3</td><td>快速型加入，開始需要卡位</td></tr>
     <tr><td>WAVE 4</td><td>重裝型登場，優先集火</td></tr>
-    <tr><td>WAVE 5</td><td>大量混編，同場敵人上限也更高——寶物留給這一波</td></tr>
+    <tr><td>WAVE 5</td><td>大量混編，同場敵人上限也更高——寶物開始留著用</td></tr>
+    <tr><td>WAVE 6</td><td>重裝為主的最終波，生成間隔最短——炸彈與冰凍留給這一波</td></tr>
   </table>
+  <p>每一波換一張地圖，共 6 張場景：經典戰場、河川要塞、鋼鐵迷宮、沙洲運河（水域多，卡橋口對射）、密林突擊（草叢多，小心伏擊）、最終防線（鋼牆多，強化砲彈價值最高）。</p>
   <p>計分：普通 100 / 快速 150 / 重裝 300；每完成一波額外獎勵 300 × 波數；滿命撿補給、滿級撿星星各 +500。</p>
 
   <h2>進階技巧</h2>
